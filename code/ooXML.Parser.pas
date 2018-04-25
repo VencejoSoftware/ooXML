@@ -81,8 +81,8 @@ type
     function EOF: Boolean;
     procedure Next;
     procedure Reset;
-    constructor Create(const Text: String; const Tag: IXMLTag);
-    class function New(const Text: String; const Tag: IXMLTag): IXMLParser;
+    constructor Create(const Text: String; const Tag: IXMLTag; const Position: Cardinal);
+    class function New(const Text: String; const Tag: IXMLTag; const Position: Cardinal = 1): IXMLParser;
   end;
 
 implementation
@@ -113,16 +113,16 @@ begin
   _Position := 1;
 end;
 
-constructor TXMLParser.Create(const Text: String; const Tag: IXMLTag);
+constructor TXMLParser.Create(const Text: String; const Tag: IXMLTag; const Position: Cardinal);
 begin
   _Text := Text;
   _Tag := Tag;
-  Reset;
+  _Position := Position;
 end;
 
-class function TXMLParser.New(const Text: String; const Tag: IXMLTag): IXMLParser;
+class function TXMLParser.New(const Text: String; const Tag: IXMLTag; const Position: Cardinal = 1): IXMLParser;
 begin
-  Result := TXMLParser.Create(Text, Tag);
+  Result := TXMLParser.Create(Text, Tag, Position);
 end;
 
 end.

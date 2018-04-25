@@ -19,7 +19,7 @@ uses
 type
   TXMLParserTest = class sealed(TTestCase)
   const
-    XML = //
+    XML_CONTENT = //
       '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' + //
       '<CATALOG>' + //
       '<CD><TITLE>Empire Burlesque</TITLE><ARTIST>Bob Dylan</ARTIST><COUNTRY>USA</COUNTRY><COMPANY>Columbia</COMPANY><PRICE>10.90</PRICE><YEAR>1985</YEAR></CD>'
@@ -50,10 +50,132 @@ type
       + '<CD><TITLE>Unchain my heart</TITLE><ARTIST>Joe Cocker</ARTIST><COUNTRY>USA</COUNTRY><COMPANY>EMI</COMPANY><PRICE>8.20</PRICE><YEAR>1987</YEAR></CD>'
       + '</CATALOG>';
   published
-
+    procedure TextEmptyReturnEOF;
+    procedure TextEmptyReturnCurrentItemNotFound;
+    procedure XMLReturnEOFFalse;
+    procedure XMLHas26Items;
+    procedure XMLFirstCurrentItemTitleIsEmpireBurlesque;
+    procedure XMLItem10ArtistIsSavageRose;
+    procedure XMLTagNotFound;
+    procedure XMLResetReturnYear1985;
+    procedure XMLSubItemNotFound;
+    procedure XMLInitPosition3788ReturnLastRecord;
   end;
 
 implementation
+
+procedure TXMLParserTest.TextEmptyReturnCurrentItemNotFound;
+var
+  Parser: IXMLParser;
+begin
+  Parser := TXMLParser.New(EmptyStr, TXMLTag.New('TAG'));
+  CheckFalse(Parser.CurrentItem.Founded);
+end;
+
+procedure TXMLParserTest.TextEmptyReturnEOF;
+var
+  Parser: IXMLParser;
+begin
+  Parser := TXMLParser.New(EmptyStr, TXMLTag.New('TAG'));
+  CheckTrue(Parser.EOF);
+end;
+
+procedure TXMLParserTest.XMLFirstCurrentItemTitleIsEmpireBurlesque;
+var
+  Parser: IXMLParser;
+begin
+  Parser := TXMLParser.New(XML_CONTENT, TXMLTag.New('CD'));
+  CheckEquals('Empire Burlesque', Parser.SubItem(TXMLTag.New('TITLE')).Value);
+end;
+
+procedure TXMLParserTest.XMLHas26Items;
+var
+  Parser: IXMLParser;
+  Count: Cardinal;
+begin
+  Parser := TXMLParser.New(XML_CONTENT, TXMLTag.New('CD'));
+  Count := 0;
+  while not Parser.EOF do
+  begin
+    Inc(Count);
+    Parser.Next;
+  end;
+  CheckEquals(26, Count);
+end;
+
+procedure TXMLParserTest.XMLItem10ArtistIsSavageRose;
+var
+  Parser: IXMLParser;
+  Count: Cardinal;
+begin
+  Parser := TXMLParser.New(XML_CONTENT, TXMLTag.New('CD'));
+  Count := 0;
+  while not Parser.EOF do
+  begin
+    if Count = 10 then
+    begin
+      CheckEquals('Savage Rose', Parser.SubItem(TXMLTag.New('ARTIST')).Value);
+      Break;
+    end;
+    Inc(Count);
+    Parser.Next;
+  end;
+end;
+
+procedure TXMLParserTest.XMLResetReturnYear1985;
+var
+  Parser: IXMLParser;
+  Count: Cardinal;
+begin
+  Parser := TXMLParser.New(XML_CONTENT, TXMLTag.New('CD'));
+  Count := 0;
+  while not Parser.EOF do
+  begin
+    if Count = 10 then
+      Break;
+    Inc(Count);
+    Parser.Next;
+  end;
+  Parser.Reset;
+  CheckEquals('1985', Parser.SubItem(TXMLTag.New('YEAR')).Value);
+end;
+
+procedure TXMLParserTest.XMLReturnEOFFalse;
+var
+  Parser: IXMLParser;
+begin
+  Parser := TXMLParser.New(XML_CONTENT, TXMLTag.New('CD'));
+  CheckFalse(Parser.EOF);
+end;
+
+procedure TXMLParserTest.XMLSubItemNotFound;
+var
+  Parser: IXMLParser;
+begin
+  Parser := TXMLParser.New(XML_CONTENT, TXMLTag.New('CD'));
+  CheckFalse(Parser.SubItem(TXMLTag.New('MONTH')).Founded);
+end;
+
+procedure TXMLParserTest.XMLTagNotFound;
+var
+  Parser: IXMLParser;
+begin
+  Parser := TXMLParser.New(XML_CONTENT, TXMLTag.New('cd'));
+  CheckFalse(Parser.CurrentItem.Founded);
+end;
+
+procedure TXMLParserTest.XMLInitPosition3788ReturnLastRecord;
+var
+  Parser: IXMLParser;
+begin
+  Parser := TXMLParser.New(XML_CONTENT, TXMLTag.New('CD'), 3788);
+  CheckEquals('Unchain my heart', Parser.SubItem(TXMLTag.New('TITLE')).Value);
+  CheckEquals('Joe Cocker', Parser.SubItem(TXMLTag.New('ARTIST')).Value);
+  CheckEquals('USA', Parser.SubItem(TXMLTag.New('COUNTRY')).Value);
+  CheckEquals('EMI', Parser.SubItem(TXMLTag.New('COMPANY')).Value);
+  CheckEquals('8.20', Parser.SubItem(TXMLTag.New('PRICE')).Value);
+  CheckEquals('1987', Parser.SubItem(TXMLTag.New('YEAR')).Value);
+end;
 
 initialization
 

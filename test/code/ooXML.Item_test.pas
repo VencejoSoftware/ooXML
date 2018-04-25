@@ -68,7 +68,7 @@ end;
 
 procedure TXMLItemTest.NotFoundEndAt0;
 begin
-  CheckEquals(0, TXMLItem.New(XML, TXMLTag.New('nonetag'), 1).StartAt);
+  CheckEquals(0, TXMLItem.New(XML, TXMLTag.New('nonetag'), 1).EndAt);
 end;
 
 procedure TXMLItemTest.NotFoundFoundedIsFalse;
