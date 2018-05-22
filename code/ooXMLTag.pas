@@ -10,7 +10,7 @@
   @author Vencejo Software <www.vencejosoft.com>
 }
 {$ENDREGION}
-unit ooXML.Tag;
+unit ooXMLTag;
 
 interface
 
@@ -20,12 +20,14 @@ type
   @abstract(XML tag interface)
   @member(Opened Opened tag representation)
   @member(Closed Closed tag representation)
+  @member(HasAttributes Specifies if the tag has attributes)
 }
 {$ENDREGION}
   IXMLTag = interface
     ['{155DAB31-AB99-4FF7-B2C7-93366C7343D3}']
     function Opened: String;
     function Closed: String;
+    function HasAttributes: Boolean;
   end;
 
 {$REGION 'documentation'}
@@ -33,6 +35,7 @@ type
   @abstract(Implementation of @link(IXMLTag))
   @member(Opened @seealso(IXMLTag.Opened))
   @member(Closed @seealso(IXMLTag.Closed))
+  @member(HasAttributes @seealso(IXMLTag.HasAttributes))
   @member(
     Create Object constructor
     @param(Tag XML tag name)
@@ -45,13 +48,19 @@ type
 {$ENDREGION}
 
   TXMLTag = class sealed(TInterfacedObject, IXMLTag)
+  const
+    START_DELIMITER = '<';
+    FINISH_DELIMITER = '>';
+    CLOSE_DELIMITER = START_DELIMITER + '/';
   strict private
     _Opened, _Closed: String;
+    _HasAttributes: Boolean;
   public
     function Opened: String;
     function Closed: String;
-    constructor Create(const Tag: String);
-    class function New(const Tag: String): IXMLTag;
+    function HasAttributes: Boolean;
+    constructor Create(const Tag: String; const HasAttributes: Boolean);
+    class function New(const Tag: String; const HasAttributes: Boolean = False): IXMLTag;
   end;
 
 implementation
@@ -66,15 +75,23 @@ begin
   Result := _Closed;
 end;
 
-constructor TXMLTag.Create(const Tag: String);
+function TXMLTag.HasAttributes: Boolean;
 begin
-  _Opened := '<' + Tag + '>';
-  _Closed := '</' + Tag + '>';
+  Result := _HasAttributes;
 end;
 
-class function TXMLTag.New(const Tag: String): IXMLTag;
+constructor TXMLTag.Create(const Tag: String; const HasAttributes: Boolean);
+const
+  OPEN_FINISIH_DELIMITER: array [Boolean] of Char = (FINISH_DELIMITER, ' ');
 begin
-  Result := TXMLTag.Create(Tag);
+  _HasAttributes := HasAttributes;
+  _Opened := START_DELIMITER + Tag + OPEN_FINISIH_DELIMITER[HasAttributes];
+  _Closed := CLOSE_DELIMITER + Tag + FINISH_DELIMITER;
+end;
+
+class function TXMLTag.New(const Tag: String; const HasAttributes: Boolean): IXMLTag;
+begin
+  Result := TXMLTag.Create(Tag, HasAttributes);
 end;
 
 end.

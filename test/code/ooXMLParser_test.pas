@@ -3,13 +3,13 @@
   Distributed under the terms of the Modified BSD License
   The full license is distributed with this software
 }
-unit ooXML.Parser_test;
+unit ooXMLParser_test;
 
 interface
 
 uses
   SysUtils,
-  ooXML.Tag, ooXML.Item, ooXML.Parser,
+  ooXMLTag, ooXMLItem, ooXMLParser,
 {$IFDEF FPC}
   fpcunit, testregistry
 {$ELSE}

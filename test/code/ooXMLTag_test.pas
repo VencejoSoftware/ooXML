@@ -3,13 +3,13 @@
   Distributed under the terms of the Modified BSD License
   The full license is distributed with this software
 }
-unit ooXML.Tag_test;
+unit ooXMLTag_test;
 
 interface
 
 uses
   SysUtils,
-  ooXML.Tag,
+  ooXMLTag,
 {$IFDEF FPC}
   fpcunit, testregistry
 {$ELSE}
@@ -22,6 +22,7 @@ type
     procedure OpenedIsXMLTag;
     procedure ClosedIsXMLTag;
     procedure CaseSensitiveInvalidIsFalse;
+    procedure HasAttributesDefinedReturnTrue;
   end;
 
 implementation
@@ -39,6 +40,11 @@ end;
 procedure TXMLTagTest.OpenedIsXMLTag;
 begin
   CheckEquals('<tag>', TXMLTag.New('tag').Opened);
+end;
+
+procedure TXMLTagTest.HasAttributesDefinedReturnTrue;
+begin
+  CheckTrue(TXMLTag.New('tag', True).HasAttributes);
 end;
 
 initialization

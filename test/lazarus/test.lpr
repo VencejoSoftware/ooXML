@@ -7,9 +7,12 @@ program test;
 
 uses
   ooRunTest,
-  ooXML.Tag_test in '..\code\ooXML.Tag_test.pas',
-  ooXML.Parser_test in '..\code\ooXML.Parser_test.pas',
-  ooXML.Item_test in '..\code\ooXML.Item_test.pas';
+  ooXMLTag_test in '..\code\ooXMLTag_test.pas',
+  ooXMLParser_test in '..\code\ooXMLParser_test.pas',
+  ooXMLItem_test in '..\code\ooXMLItem_test.pas',
+  ooXMLItem in '..\..\code\ooXMLItem.pas',
+  ooXMLParser in '..\..\code\ooXMLParser.pas',
+  ooXMLTag in '..\..\code\ooXMLTag.pas';
 
 {R *.RES}
 

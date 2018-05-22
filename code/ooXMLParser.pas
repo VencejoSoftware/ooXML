@@ -10,12 +10,12 @@
   @author Vencejo Software <www.vencejosoft.com>
 }
 {$ENDREGION}
-unit ooXML.Parser;
+unit ooXMLParser;
 
 interface
 
 uses
-  ooXML.Tag, ooXML.Item;
+  ooXMLTag, ooXMLItem;
 
 type
 {$REGION 'documentation'}

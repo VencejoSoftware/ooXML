@@ -10,13 +10,13 @@
   @author Vencejo Software <www.vencejosoft.com>
 }
 {$ENDREGION}
-unit ooXML.Item;
+unit ooXMLItem;
 
 interface
 
 uses
   SysUtils, StrUtils,
-  ooXML.Tag;
+  ooXMLTag;
 
 type
 {$REGION 'documentation'}
@@ -62,6 +62,12 @@ type
     @param(FromPos Initial position to parse start)
   )
   @member(
+    ValueStart Get the offset of value position
+    @param(Text Text to parse)
+    @param(Tag @link(IXMLTag XML tag) name)
+    @return(Initial position of value)
+  )
+  @member(
     Create Object constructor
     @param(Text Text to parse)
     @param(Tag @link(IXMLTag XML tag) name)
@@ -82,6 +88,7 @@ type
     _Value: String;
   private
     procedure Parse(const Text: String; const Tag: IXMLTag; const FromPos: Cardinal);
+    function ValueStart(const Text: String; const Tag: IXMLTag): Cardinal;
   public
     function StartAt: Cardinal;
     function EndAt: Cardinal;
@@ -119,6 +126,14 @@ begin
     Result := EmptyStr;
 end;
 
+function TXMLItem.ValueStart(const Text: String; const Tag: IXMLTag): Cardinal;
+begin
+  if Tag.HasAttributes then
+    Result := Succ(PosEx(TXMLTag.FINISH_DELIMITER, Text, _StartAt))
+  else
+    Result := _StartAt + Cardinal(Length(Tag.Opened));
+end;
+
 procedure TXMLItem.Parse(const Text: String; const Tag: IXMLTag; const FromPos: Cardinal);
 var
   ValueStartAt: Cardinal;
@@ -129,7 +144,7 @@ begin
     _EndAt := PosEx(Tag.Closed, Text, _StartAt);
     if EndAt > 0 then
     begin
-      ValueStartAt := _StartAt + Cardinal(Length(Tag.Opened));
+      ValueStartAt := ValueStart(Text, Tag);
       _Value := Copy(Text, ValueStartAt, _EndAt - ValueStartAt);
       _Value := Trim(_Value);
       _EndAt := _EndAt + Cardinal(Length(Tag.Closed));
