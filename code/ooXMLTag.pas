@@ -39,10 +39,12 @@ type
   @member(
     Create Object constructor
     @param(Tag XML tag name)
+    @param(HasAttributes Use tag as attribute)
   )
   @member(
     New Create a new @classname as interface
     @param(Tag XML tag name)
+    @param(HasAttributes Use tag as attribute)
   )
 }
 {$ENDREGION}
